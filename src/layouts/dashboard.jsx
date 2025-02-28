@@ -9,6 +9,7 @@ import {
 } from "@/widgets/layout";
 import routes from "@/routes";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+import { AllUsers, AllSeller } from "@/pages/admin"; // Import admin pages
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -34,15 +35,22 @@ export function Dashboard() {
         >
           <Cog6ToothIcon className="h-5 w-5" />
         </IconButton>
+
         <Routes>
+          {/* Dashboard Routes */}
           {routes.map(
             ({ layout, pages }) =>
               layout === "dashboard" &&
               pages.map(({ path, element }) => (
-                <Route exact path={path} element={element} />
+                <Route key={path} path={path} element={element} />
               ))
           )}
+
+          {/* Admin Routes */}
+          <Route path="admin/all-users" element={<AllUsers />} />
+          <Route path="admin/all-sellers" element={<AllSeller />} />
         </Routes>
+
         <div className="text-blue-gray-600">
           <Footer />
         </div>
