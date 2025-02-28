@@ -58,12 +58,6 @@ export const routes = [
         isDropdown: true,
         subPages: [
           {
-            icon: <PlusCircleIcon className="w-5 h-5 text-inherit" />,
-            name: "create category",
-            path: "/dashboard/category/create",
-            element: <CreateCategory />,
-          },
-          {
             icon: <ListBulletIcon className="w-5 h-5 text-inherit" />,
             name: "all categories",
             path: "/dashboard/category/all",

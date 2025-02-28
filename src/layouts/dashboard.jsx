@@ -10,6 +10,7 @@ import {
 import routes from "@/routes";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
 import { AllUsers, AllSeller } from "@/pages/admin"; // Import admin pages
+import { CategoryList, CreateCategory } from "@/pages/category"; // Import category pages
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -49,6 +50,11 @@ export function Dashboard() {
           {/* Admin Routes */}
           <Route path="admin/all-users" element={<AllUsers />} />
           <Route path="admin/all-sellers" element={<AllSeller />} />
+          
+          {/* Category Routes */}
+          <Route path="category/create" element={<CreateCategory />} />
+          <Route path="category/all" element={<CategoryList />} />
+
         </Routes>
 
         <div className="text-blue-gray-600">

@@ -26,6 +26,34 @@ const AllUsers = () => {
     }
   }, []);
 
+  // Function to handle role update
+  const handleUpdateRole = async (userId, newRole) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      // Call the API to update the user's role
+      await myaxios.put(
+        `admin/users/${userId}/role`,
+        { role: newRole },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Update the local state to reflect the new role
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === userId ? { ...user, role: newRole } : user
+        )
+      );
+
+      // Close the modal
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error updating role:", error);
+    }
+  };
+
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
@@ -65,12 +93,12 @@ const AllUsers = () => {
                     <td className={className}>{name}</td>
                     <td className={className}>{email}</td>
                     <td className={className}>
-                        <Chip
-                            variant="ghost"
-                            value={role}
-                            className={`py-0.5 px-2 text-[11px] font-medium w-fit 
-                            ${role === "seller" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"}`}
-                        />
+                      <Chip
+                        variant="ghost"
+                        value={role}
+                        className={`py-0.5 px-2 text-[11px] font-medium w-fit 
+                        ${role === "seller" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"}`}
+                      />
                     </td>
                     <td className={className}>
                       <div className="flex items-center gap-2">
@@ -105,14 +133,7 @@ const AllUsers = () => {
         <RoleUpdateModel
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onUpdate={(id, newRole) => {
-            setUsers(
-              users.map((user) =>
-                user.id === id ? { ...user, role: newRole } : user
-              )
-            );
-            setIsModalOpen(false);
-          }}
+          onUpdate={handleUpdateRole} // Pass the handleUpdateRole function
           user={selectedUser}
         />
       )}
