@@ -17,6 +17,7 @@ import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import { AllUsers, AllSeller } from "@/pages/admin";
 import { CategoryList, CreateCategory } from "@/pages/category";
+import Products from "@/pages/product/Products";
 
 
 const icon = {
@@ -64,6 +65,13 @@ export const routes = [
             element: <CategoryList />,
           },
         ],
+      },
+      // ✅ Product is added here, above Admin
+      {
+        icon: <FolderIcon className="w-5 h-5 text-inherit" />,
+        name: "product",
+        path: "/dashboard/products",
+        element: <Products />,
       },
       // ✅ Admin remains below Category
       {
