@@ -8,16 +8,17 @@ import {
   Cog6ToothIcon,
   UserGroupIcon,
   UsersIcon,
-  FolderIcon, // Icon for Category
-  PlusCircleIcon, // Icon for Create Category
-  ListBulletIcon, // Icon for All Categories
+  FolderIcon, 
+  ListBulletIcon,
+  ShoppingBagIcon, // ✅ Import Orders Icon
 } from "@heroicons/react/24/solid";
 
 import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import { AllUsers, AllSeller } from "@/pages/admin";
-import { CategoryList, CreateCategory } from "@/pages/category";
+import { CategoryList } from "@/pages/category";
 import Products from "@/pages/product/Products";
+import Orders from "./pages/orders/Orders";
 
 
 const icon = {
@@ -52,7 +53,13 @@ export const routes = [
         path: "/notifications",
         element: <Notifications />,
       },
-      // ✅ Category is added here, above Admin
+      // ✅ Orders added BELOW Notifications
+      {
+        icon: <ShoppingBagIcon {...icon} />,
+        name: "orders",
+        path: "/dashboard/orders",
+        element: <Orders />,
+      },
       {
         icon: <FolderIcon className="w-5 h-5 text-inherit" />,
         name: "category",
@@ -66,14 +73,12 @@ export const routes = [
           },
         ],
       },
-      // ✅ Product is added here, above Admin
       {
         icon: <FolderIcon className="w-5 h-5 text-inherit" />,
         name: "product",
         path: "/dashboard/products",
         element: <Products />,
       },
-      // ✅ Admin remains below Category
       {
         icon: <Cog6ToothIcon className="w-5 h-5 text-inherit" />,
         name: "admin",

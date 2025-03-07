@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import myaxios from "@/utils/myaxios";
 import { TrashIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import { Card, CardHeader, CardBody, Typography, Chip } from "@material-tailwind/react";
+import AddressModal from "@/components/admin/AddressModal";
 import RoleUpdateModel from "@/components/RoleUpdateModel";
 
 const AllUsers = () => {
@@ -9,6 +10,8 @@ const AllUsers = () => {
   const [count, setCount] = useState(0);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [selectedUserAddress, setSelectedUserAddress] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -26,32 +29,38 @@ const AllUsers = () => {
     }
   }, []);
 
-  // Function to handle role update
-  const handleUpdateRole = async (userId, newRole) => {
+  // Fetch user address
+  const fetchUserAddress = async (userId) => {
     const token = localStorage.getItem("token");
 
     try {
-      // Call the API to update the user's role
-      await myaxios.put(
-        `admin/users/${userId}/role`,
-        { role: newRole },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await myaxios.get(`addresses/details/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      // Update the local state to reflect the new role
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === userId ? { ...user, role: newRole } : user
-        )
-      );
-
-      // Close the modal
-      setIsModalOpen(false);
+      if (response.data && response.data.data.length > 0) {
+        const addressObj = response.data.data[0]; // Assuming single address
+        const formattedAddress = `
+          Street: ${addressObj.street_address} 
+          City: ${addressObj.city} 
+          State: ${addressObj.state} 
+          Postal Code: ${addressObj.postal_code} 
+          Country: ${addressObj.country}
+        `;
+        setSelectedUserAddress(formattedAddress);
+      } else {
+        setSelectedUserAddress("NO ADDRESS SET");
+      }
     } catch (error) {
-      console.error("Error updating role:", error);
+      if (error.response && error.response.status === 404) {
+        setSelectedUserAddress("NO ADDRESS SET");
+      } else {
+        console.error("Error fetching address:", error);
+        setSelectedUserAddress("Error fetching address");
+      }
     }
+
+    setIsAddressModalOpen(true);
   };
 
   return (
@@ -63,14 +72,11 @@ const AllUsers = () => {
           </Typography>
         </CardHeader>
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-          <table className="w-full min-w-[640px] table-auto">
+          <table className="w-full min-w-[720px] table-auto">
             <thead>
               <tr>
-                {["ID", "Name", "Email", "Role", "Actions"].map((el) => (
-                  <th
-                    key={el}
-                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
-                  >
+                {["ID", "Name", "Email", "Role", "Address", "Actions"].map((el) => (
+                  <th key={el} className="border-b border-blue-gray-50 py-3 px-5 text-left">
                     <Typography
                       variant="small"
                       className="text-[11px] font-bold uppercase text-blue-gray-400"
@@ -101,6 +107,14 @@ const AllUsers = () => {
                       />
                     </td>
                     <td className={className}>
+                      <button
+                        className="text-blue-500 hover:underline"
+                        onClick={() => fetchUserAddress(id)}
+                      >
+                        View
+                      </button>
+                    </td>
+                    <td className={className}>
                       <div className="flex items-center gap-2">
                         <div
                           className="p-2 bg-blue-50 hover:bg-blue-300 transition rounded-md cursor-pointer"
@@ -129,14 +143,22 @@ const AllUsers = () => {
           </table>
         </CardBody>
       </Card>
+
+      {/* Role Update Modal */}
       {isModalOpen && selectedUser && (
         <RoleUpdateModel
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onUpdate={handleUpdateRole} // Pass the handleUpdateRole function
           user={selectedUser}
         />
       )}
+
+      {/* Address Modal */}
+      <AddressModal
+        isOpen={isAddressModalOpen}
+        onClose={() => setIsAddressModalOpen(false)}
+        address={selectedUserAddress}
+      />
     </div>
   );
 };

@@ -13,12 +13,12 @@ const Products = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false); 
 
     useEffect(() => {
         fetchProducts();
     }, []);
-
+ 
     const fetchProducts = () => {
         const token = localStorage.getItem("token");
 
