@@ -19,10 +19,33 @@ import {
   PencilIcon,
 } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { ProfileInfoCard, MessageCard } from "@/widgets/cards";
+import myaxios from "@/utils/myaxios";
 import { platformSettingsData, conversationsData, projectsData } from "@/data";
 
 export function Profile() {
+
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      myaxios
+        .get("users/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          setUser(response.data.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching user details:", error);
+        });
+    }
+  }, []);
+
+
   return (
     <>
       <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover	bg-center">
@@ -41,7 +64,7 @@ export function Profile() {
               />
               <div>
                 <Typography variant="h5" color="blue-gray" className="mb-1">
-                  Richard Davis
+                  { user?.name }
                 </Typography>
                 <Typography
                   variant="small"

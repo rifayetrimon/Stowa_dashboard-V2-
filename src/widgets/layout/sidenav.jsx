@@ -38,7 +38,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
           color={sidenavType === "dark" ? "blue-gray" : "white"}
           className="ml-3"
         >
-          {brandName || "Brand Name"} {/* Fallback for brandName */}
+          {/* {brandName || "Brand Name"} Fallback for brandName */}
         </Typography>
         <IconButton
           variant="text"
@@ -156,7 +156,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
 
 Sidenav.propTypes = {
   brandImg: PropTypes.string,
-  brandName: PropTypes.string,
+  // brandName: PropTypes.string,
   routes: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 

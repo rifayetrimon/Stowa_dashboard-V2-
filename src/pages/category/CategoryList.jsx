@@ -4,7 +4,7 @@ import { TrashIcon, PencilSquareIcon, EyeIcon } from "@heroicons/react/24/solid"
 import { Card, CardHeader, CardBody, Typography, Chip, Button, Dialog } from "@material-tailwind/react";
 import CategoryDetailsModal from "@/components/category/CategoryDetailsModal";
 import CategoryUpdateModal from "@/components/category/CategoryUpdateModal";
-import CategoryForm from "@/components/category/CategoryForm"; // Import Add Category Form
+import CategoryForm from "@/components/category/CategoryForm";
 
 const CategoryList = () => {
     const [categories, setCategories] = useState([]);
@@ -15,69 +15,86 @@ const CategoryList = () => {
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
+    // Fetch both users and categories together
+    const fetchData = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+
+            // Fetch Users
+            const usersResponse = await myaxios.get("admin/allusers", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            let usersMap = {};
+            if (usersResponse.data?.data) {
+                usersMap = Object.fromEntries(
+                    usersResponse.data.data.map(user => [String(user.id), user.name])
+                );
+            }
+            setUsers(usersMap);
+            console.log("Fetched Users:", usersMap);
+
+            // Fetch Categories
+            const categoriesResponse = await myaxios.get("category", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            setCategories(categoriesResponse.data?.data || []);
+            setCount(categoriesResponse.data?.count || 0);
+            console.log("Fetched Categories:", categoriesResponse.data?.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // Fetch data when component mounts
     useEffect(() => {
-        fetchCategories();
-        fetchUsers();
+        fetchData();
     }, []);
 
-    const fetchCategories = () => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            myaxios.get("category", { headers: { Authorization: `Bearer ${token}` } })
-                .then((response) => {
-                    setCategories(response.data?.data || []);
-                    setCount(response.data?.count || 0);
-                })
-                .catch((error) => console.error("Error fetching categories:", error));
-        }
-    };
-
-    const fetchUsers = () => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            myaxios.get("admin/allusers", { headers: { Authorization: `Bearer ${token}` } })
-                .then((response) => {
-                    if (response.data?.data) {
-                        const usersMap = Object.fromEntries(response.data.data.map(user => [user.id, user.name]));
-                        setUsers(usersMap);
-                    }
-                })
-                .catch((error) => console.error("Error fetching users:", error));
-        }
-    };
-
+    // Open "Add Category" modal
     const handleAddCategory = () => {
         setIsAddModalOpen(true);
     };
 
+    // Handle category added
     const handleCategoryAdded = () => {
-        setIsAddModalOpen(false); // Close modal
-        fetchCategories(); // Refresh categories
+        setIsAddModalOpen(false);
+        fetchData();
     };
 
+    // Open "View Details" modal
     const handleViewDetails = (category) => {
         setSelectedCategory(category);
         setIsDetailsModalOpen(true);
     };
 
+    // Open "Update Category" modal
     const handleOpenUpdateModal = (category) => {
         setSelectedCategory(category);
         setIsUpdateModalOpen(true);
     };
 
+    // Handle category update
     const handleUpdateCategory = () => {
         setIsUpdateModalOpen(false);
-        // fetchCategories();
+        fetchData();
     };
 
-    const handleDelete = (id) => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            myaxios.delete(`category/${id}`, { headers: { Authorization: `Bearer ${token}` } })
-                .then(() => {
-                    fetchCategories();
-                })
-                .catch((error) => console.error("Error deleting category:", error));
+    // Handle category deletion
+    const handleDelete = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+
+            await myaxios.delete(`category/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            fetchData();
+        } catch (error) {
+            console.error("Error deleting category:", error);
         }
     };
 
@@ -113,7 +130,7 @@ const CategoryList = () => {
                                     <td className="py-3 px-5 border-b border-blue-gray-50">
                                         <Chip
                                             variant="ghost"
-                                            value={users[category.user_id] || `❌ Unknown User (ID: ${category.user_id})`}
+                                            value={users[String(category.user_id)] || `⚠️ Missing User (ID: ${category.user_id})`}
                                             className="py-0.5 px-2 text-[11px] font-medium w-fit bg-gray-100 text-gray-700"
                                         />
                                     </td>
@@ -149,10 +166,20 @@ const CategoryList = () => {
             </Dialog>
 
             {/* View Details Modal */}
-            <CategoryDetailsModal isOpen={isDetailsModalOpen} onClose={() => setIsDetailsModalOpen(false)} category={selectedCategory} users={users} />
+            <CategoryDetailsModal 
+                isOpen={isDetailsModalOpen} 
+                onClose={() => setIsDetailsModalOpen(false)} 
+                category={selectedCategory} 
+                users={users} 
+            />
 
             {/* Update Category Modal */}
-            <CategoryUpdateModal isOpen={isUpdateModalOpen} onClose={() => setIsUpdateModalOpen(false)} category={selectedCategory} onUpdate={handleUpdateCategory} />
+            <CategoryUpdateModal 
+                isOpen={isUpdateModalOpen} 
+                onClose={() => setIsUpdateModalOpen(false)} 
+                category={selectedCategory} 
+                onUpdate={handleUpdateCategory} 
+            />
         </div>
     );
 };

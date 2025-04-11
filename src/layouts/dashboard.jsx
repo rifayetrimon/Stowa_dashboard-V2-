@@ -11,11 +11,9 @@ import routes from "@/routes";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
 import { AllUsers, AllSeller } from "@/pages/admin"; // Import admin pages
 import { CategoryList, CreateCategory } from "@/pages/category"; // Import category pages
-import Products from "@/pages/product/Products";
+import Products from "@/pages/product/Products"; 
 
-
-
-
+ 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavType } = controller;
