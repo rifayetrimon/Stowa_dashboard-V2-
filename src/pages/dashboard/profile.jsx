@@ -70,7 +70,7 @@ export function Profile() {
                   variant="small"
                   className="font-normal text-blue-gray-600"
                 >
-                  CEO / Co-Founder
+                  Role: { user?.role }
                 </Typography>
               </div>
             </div>
