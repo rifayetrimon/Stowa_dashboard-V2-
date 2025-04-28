@@ -8,9 +8,9 @@ import {
   Cog6ToothIcon,
   UserGroupIcon,
   UsersIcon,
-  FolderIcon, 
+  FolderIcon,
   ListBulletIcon,
-  ShoppingBagIcon, // ✅ Import Orders Icon
+  ShoppingBagIcon,
 } from "@heroicons/react/24/solid";
 
 import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
@@ -19,7 +19,6 @@ import { AllUsers, AllSeller } from "@/pages/admin";
 import { CategoryList } from "@/pages/category";
 import Products from "@/pages/product/Products";
 import Orders from "./pages/orders/Orders";
-
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -53,20 +52,19 @@ export const routes = [
         path: "/notifications",
         element: <Notifications />,
       },
-      // ✅ Orders added BELOW Notifications
       {
         icon: <ShoppingBagIcon {...icon} />,
         name: "orders",
-        path: "/dashboard/orders",
+        path: "/orders",
         element: <Orders />,
       },
       {
-        icon: <FolderIcon className="w-5 h-5 text-inherit" />,
+        icon: <FolderIcon {...icon} />,
         name: "category",
         isDropdown: true,
         subPages: [
           {
-            icon: <ListBulletIcon className="w-5 h-5 text-inherit" />,
+            icon: <ListBulletIcon {...icon} />,
             name: "all categories",
             path: "/dashboard/category/all",
             element: <CategoryList />,
@@ -74,24 +72,24 @@ export const routes = [
         ],
       },
       {
-        icon: <FolderIcon className="w-5 h-5 text-inherit" />,
+        icon: <FolderIcon {...icon} />,
         name: "product",
-        path: "/dashboard/products",
+        path: "/products",
         element: <Products />,
       },
       {
-        icon: <Cog6ToothIcon className="w-5 h-5 text-inherit" />,
+        icon: <Cog6ToothIcon {...icon} />,
         name: "admin",
         isDropdown: true,
         subPages: [
           {
-            icon: <UserGroupIcon className="w-5 h-5 text-inherit" />,
+            icon: <UserGroupIcon {...icon} />,
             name: "all users",
             path: "/dashboard/admin/all-users",
             element: <AllUsers />,
           },
           {
-            icon: <UsersIcon className="w-5 h-5 text-inherit" />,
+            icon: <UsersIcon {...icon} />,
             name: "all sellers",
             path: "/dashboard/admin/all-sellers",
             element: <AllSeller />,
